@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -eEuo pipefail
+
+root=/app/public
+
+if [ -s $root/wp-config.php ]; then
+  chown root:www-data $root/wp-config.php
+  chmod 440 $root/wp-config.php
+  rm -rf $root/_wp-content
+else
+  if [ ! -d $root/wp-content ]; then
+    mkdir $root/wp-content
+  fi
+  if [ -n "$(ls -A $root/wp-content)" ]; then
+    echo '`wp-content` is not empty'
+    exit 1
+  fi
+  mv $root/_wp-content/* $root/wp-content
+  rmdir $root/_wp-content
+fi
+chown -R www-data:root $root/wp-content
+chmod -R u=rwX,g=,o= $root/wp-content
+
+exec su-exec www-data frankenphp run "$@"
