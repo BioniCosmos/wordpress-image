@@ -34,4 +34,10 @@ $ podman run \
 ```
 
 > [!NOTE]
-> For security reasons, the site root directory `/app/public` and its contents are read-only, with the exception of `wp-content`. Consequently, when using the web installer, you must create and paste the configuration file (`wp-config.php`) manually. Additionally, it is recommended to add `define("FS_METHOD", "direct");` to `wp-config.php` to allow normal updates and installations from the WordPress dashboard.
+> For security reasons, the site root directory `/app/public` and its contents are read-only, with the exception of `wp-content`. Consequently, when initializing WordPress using the web installer, please follow these steps:
+>
+> 1. Start the container by mounting **only** an empty `wp-content` directory. Then proceed with the installation wizard in your browser.
+> 2. At the final step, WordPress will prompt you to copy the generated configuration text into `wp-config.php`.
+> 3. Once you reach this screen, stop and remove the container. Create the `wp-config.php` file manually on your host, then re-create the container by mounting both `wp-config.php` and `wp-content`, as shown in the example above.
+>
+> Additionally, it is recommended to add `define("FS_METHOD", "direct");` to `wp-config.php` to allow normal updates and installations directly from the WordPress dashboard.
