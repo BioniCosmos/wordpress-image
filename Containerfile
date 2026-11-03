@@ -11,6 +11,8 @@ RUN wcurl https://wordpress.org/latest.tar.gz && \
 COPY docker-php-entrypoint /usr/local/bin
 RUN chmod +x /usr/local/bin/docker-php-entrypoint && \
     setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp && \
+    sed -i '/{$CADDY_GLOBAL_OPTIONS}/i\
+      \\tservers {\n\t\ttrusted_proxies static private_ranges\n\t}\n' /etc/frankenphp/Caddyfile && \
     chown -R www-data:root /config/caddy /data/caddy && \
     chmod -R u=rwX,g=,o= /config/caddy /data/caddy && \
     mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
